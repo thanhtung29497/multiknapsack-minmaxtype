@@ -19,6 +19,10 @@ public class ConstraintSystem extends AbstractInvariant implements IConstraint {
 	}
 	public String name(){ return "ConstraintSystem";}
 	
+	public int number() {
+		return this._constraints.size();
+	}
+	
 	public void close(){
 		HashSet<VarIntLS> S = new HashSet<VarIntLS>();
 		mapVarIntLSConstraints = new HashMap<VarIntLS, HashSet<IConstraint>>();
@@ -79,6 +83,10 @@ public class ConstraintSystem extends AbstractInvariant implements IConstraint {
 	public VarIntLS[] getVariables() {
 		// TODO Auto-generated method stub
 		return _x;
+	}
+	
+	public ArrayList<IConstraint> getConstraints() {
+		return this._constraints;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import localsearch.functions.basic.FuncMult;
 import localsearch.functions.basic.FuncPlus;
 import localsearch.functions.sum.Sum;
 import localsearch.model.ConstraintSystem;
+import localsearch.model.IConstraint;
 import localsearch.model.LocalSearchManager;
 import localsearch.model.VarIntLS;
 import localsearch.search.MultiStageGreedySearch;
@@ -23,7 +24,7 @@ public class Demo {
 		
 		MinMaxTypeMultiKnapsackInput input = new MinMaxTypeMultiKnapsackInput();
 		String directory = new File(".").getAbsolutePath() + "/bin/khmtk60/miniprojects/multiknapsackminmaxtypeconstraints";
-		input = input.loadFromFile(directory + "/test.json");
+		input = input.loadFromFile(directory + "/MinMaxTypeMultiKnapsackInput-1000.json");
 		
 		LocalSearchManager mgr = new LocalSearchManager();
 		ConstraintSystem constraints = new ConstraintSystem(mgr);
@@ -61,7 +62,7 @@ public class Demo {
 		int P[] = new int[m];
 		int T[] = new int[m];
 		int R[] = new int[m];
-		int base = 1000;
+		int base = 1;
 		
 		for (int i = 0; i < n; ++i) {
 			MinMaxTypeMultiKnapsackInputItem item = input.getItems()[i];
@@ -121,17 +122,18 @@ public class Demo {
 			constraints.post(new LessOrEqual(new Sum(Z), R[b]));
 		}
 		
+		int bin = 0;
+		for (int i = 0; i < n; ++i) {
+			bin = (bin + 1) % m;
+			x[i][bin].setValuePropagate(1);
+		}
 		mgr.close();
 		constraints.close();
 		
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < m; ++j) {
-				x[i][j].setValuePropagate(1);
-			}
-		}
+		
 		
 		TabuSearch search = new TabuSearch();
-		search.search(constraints, 50, 200, 10000, 100);
+		search.search(constraints, 50, 200, 100, 1000);
 		
 //		MultiStageGreedySearch search = new MultiStageGreedySearch();
 //		search.search(constraints, 10000, 100000, true);
@@ -141,7 +143,7 @@ public class Demo {
 //		MinMaxSelector mms = new MinMaxSelector(constraints);
 //		
 //		int it = 0;
-//		while(it < 10000 && constraints.violations() > 0){
+//		while(it < 100000 && constraints.violations() > 0){
 //			
 //			VarIntLS sel_x = mms.selectMostViolatingVariable();
 //			int sel_v = mms.selectMostPromissingValue(sel_x);
@@ -154,9 +156,13 @@ public class Demo {
 		
 		for (int i = 0; i < n; ++i) {
 			for (int j = 0; j < m; ++j) {
-				System.out.println("x[" + i + "," + j + "]=" + x[i][j].getValue());
+				System.out.print(" " + x[i][j].getValue());
 			}
+			System.out.println("");
 		}
+		
+		
+		
 	}
 
 }
